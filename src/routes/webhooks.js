@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { stripe } = require('../services/stripe');
 const Business = require('../models/Business');
 const Referral = require('../models/Referral');
 const Payout = require('../models/Payout');
 
 // Stripe webhook endpoint
 router.post('/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
+  const { stripe } = require('../services/stripe');
   const sig = req.headers['stripe-signature'];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -46,7 +46,6 @@ router.post('/stripe', express.raw({ type: 'application/json' }), async (req, re
 
 async function handleAccountUpdated(account) {
   try {
-    // Update business Stripe status if needed
     const business = await Business.findOne({ stripeAccountId: account.id });
     if (business) {
       console.log(`Stripe account ${account.id} updated for business ${business.businessId}`);
@@ -64,7 +63,6 @@ async function handleTransferFailed(transfer) {
       payout.failureReason = transfer.failure_message || 'Transfer failed';
       await payout.save();
 
-      // Restore pending earnings
       const referral = await Referral.findById(payout.referralId);
       if (referral) {
         referral.earnings.pending += payout.amount;
