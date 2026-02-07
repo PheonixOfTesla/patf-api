@@ -1,0 +1,28 @@
+{
+  "name": "patf-api",
+  "version": "1.0.0",
+  "description": "PATF: People Are The Future - Plug-and-play referral API",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "keywords": ["referral", "affiliate", "api", "stripe"],
+  "author": "phoenixoftesla",
+  "license": "MIT",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.4",
+    "express": "^5.2.1",
+    "helmet": "^8.1.0",
+    "mongoose": "^9.1.6",
+    "morgan": "^1.10.1",
+    "nanoid": "^3.3.11",
+    "stripe": "^20.3.1",
+    "uuid": "^13.0.0"
+  }
+}
