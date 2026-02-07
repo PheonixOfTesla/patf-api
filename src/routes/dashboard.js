@@ -1,22 +1,17 @@
+const express = require('express');
+const router = express.Router();
 const Referral = require('../models/Referral');
 const Payout = require('../models/Payout');
 const { authenticateApiKey } = require('../middleware/auth');
 
 // GET /api/v1/dashboard - Business analytics
-module.exports = [authenticateApiKey, async (req, res) => {
+router.get('/', authenticateApiKey, async (req, res) => {
   try {
     const business = req.business;
     const { startDate, endDate } = req.query;
 
-    // Build date filter
-    const dateFilter = {};
-    if (startDate) dateFilter.$gte = new Date(startDate);
-    if (endDate) dateFilter.$lte = new Date(endDate);
-
-    // Get all referrals for this business
     const referrals = await Referral.find({ businessId: business.businessId });
 
-    // Calculate totals
     const totals = referrals.reduce((acc, ref) => {
       acc.clicks += ref.stats.clicks;
       acc.signups += ref.stats.signups;
@@ -34,7 +29,6 @@ module.exports = [authenticateApiKey, async (req, res) => {
       commissionsPaid: 0
     });
 
-    // Get top referrers
     const topReferrers = referrals
       .sort((a, b) => b.earnings.total - a.earnings.total)
       .slice(0, 10)
@@ -46,7 +40,6 @@ module.exports = [authenticateApiKey, async (req, res) => {
         earnings: ref.earnings.total
       }));
 
-    // Get recent conversions
     const recentConversions = referrals
       .flatMap(ref => ref.referredUsers.map(u => ({
         ...u.toObject(),
@@ -56,17 +49,14 @@ module.exports = [authenticateApiKey, async (req, res) => {
       .sort((a, b) => new Date(b.date) - new Date(a.date))
       .slice(0, 20);
 
-    // Get recent payouts
     const recentPayouts = await Payout.find({ businessId: business.businessId })
       .sort({ createdAt: -1 })
       .limit(10);
 
-    // Calculate conversion rate
     const conversionRate = totals.clicks > 0
       ? ((totals.conversions / totals.clicks) * 100).toFixed(2)
       : 0;
 
-    // Calculate average order value
     const avgOrderValue = totals.conversions > 0
       ? (totals.revenue / totals.conversions).toFixed(2)
       : 0;
@@ -105,4 +95,6 @@ module.exports = [authenticateApiKey, async (req, res) => {
     console.error('Dashboard error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
-}];
+});
+
+module.exports = router;

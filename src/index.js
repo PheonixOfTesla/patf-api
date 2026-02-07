@@ -8,6 +8,7 @@ require('dotenv').config();
 const referralRoutes = require('./routes/referrals');
 const businessRoutes = require('./routes/business');
 const webhookRoutes = require('./routes/webhooks');
+const dashboardRoutes = require('./routes/dashboard');
 
 const app = express();
 
@@ -28,7 +29,7 @@ app.use('/api/v1/business', businessRoutes);
 app.use('/api/v1/webhooks', webhookRoutes);
 
 // Dashboard endpoint
-app.get('/api/v1/dashboard', require('./routes/dashboard'));
+app.use('/api/v1/dashboard', dashboardRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {
