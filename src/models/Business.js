@@ -25,9 +25,8 @@ const businessSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
-businessSchema.pre('save', function(next) {
+businessSchema.pre('save', function() {
   this.updatedAt = Date.now();
-  next();
 });
 
 module.exports = mongoose.model('Business', businessSchema);

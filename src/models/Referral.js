@@ -35,9 +35,8 @@ const referralSchema = new mongoose.Schema({
 referralSchema.index({ businessId: 1, code: 1 });
 referralSchema.index({ businessId: 1, userId: 1 });
 
-referralSchema.pre('save', function(next) {
+referralSchema.pre('save', function() {
   this.updatedAt = Date.now();
-  next();
 });
 
 module.exports = mongoose.model('Referral', referralSchema);
