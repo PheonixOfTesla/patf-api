@@ -3,8 +3,6 @@ const router = express.Router();
 const Business = require('../models/Business');
 const { authenticateApiKey } = require('../middleware/auth');
 const { generateApiKey, generateBusinessId } = require('../utils/codeGenerator');
-const { createConnectAccount, createAccountLink } = require('../services/stripe');
-
 // POST /api/v1/business/register - Register a new business
 router.post('/register', async (req, res) => {
   try {
@@ -120,6 +118,7 @@ router.put('/settings', authenticateApiKey, async (req, res) => {
 // POST /api/v1/business/connect-stripe - Setup Stripe Connect
 router.post('/connect-stripe', authenticateApiKey, async (req, res) => {
   try {
+    const { createConnectAccount, createAccountLink } = require('../services/stripe');
     const { returnUrl, refreshUrl } = req.body;
     const business = req.business;
 
