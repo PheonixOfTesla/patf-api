@@ -28,8 +28,7 @@ app.use('/api/v1/business', businessRoutes);
 app.use('/api/v1/webhooks', webhookRoutes);
 
 // Dashboard endpoint
-const dashboardHandlers = require('./routes/dashboard');
-app.get('/api/v1/dashboard', ...dashboardHandlers);
+app.get('/api/v1/dashboard', require('./routes/dashboard'));
 
 // Error handler
 app.use((err, req, res, next) => {
